@@ -109,4 +109,4 @@ MIT
 
 ---
 
-Created by [Your Name] - A portfolio project showcasing multimodal AI capabilities
+Created by Sneha - A  project showcasing multimodal AI capabilities
