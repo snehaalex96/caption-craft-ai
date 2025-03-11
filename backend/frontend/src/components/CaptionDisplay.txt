@@ -1,0 +1,99 @@
+import React, { useState } from 'react';
+
+const CaptionDisplay = ({ result, onRetry, loading }) => {
+  const [activeCaptionIndex, setActiveCaptionIndex] = useState(0);
+  const [copied, setCopied] = useState(null);
+  
+  if (!result) return null;
+  
+  const { captions, hashtags, description, style } = result;
+  
+  const handleCopy = (text, type) => {
+    navigator.clipboard.writeText(text);
+    setCopied(type);
+    setTimeout(() => setCopied(null), 2000);
+  };
+  
+  const getFullCaption = (captionIndex) => {
+    // Combine caption with hashtags
+    return `${captions[captionIndex]}\n\n${hashtags.join(' ')}`;
+  };
+  
+  return (
+    <div className="caption-display">
+      <div className="result-header">
+        <h2>Generated Captions</h2>
+        <button 
+          className="regenerate-btn"
+          onClick={onRetry}
+          disabled={loading}
+        >
+          Regenerate
+        </button>
+      </div>
+      
+      <div className="image-description">
+        <h3>Image Analysis</h3>
+        <p>{description}</p>
+      </div>
+      
+      <div className="caption-options">
+        <h3>Caption Options</h3>
+        <div className="caption-tabs">
+          {captions.map((caption, index) => (
+            <button
+              key={index}
+              className={`caption-tab ${index === activeCaptionIndex ? 'active' : ''}`}
+              onClick={() => setActiveCaptionIndex(index)}
+            >
+              Option {index + 1}
+            </button>
+          ))}
+        </div>
+        
+        <div className="active-caption">
+          <div className="caption-text">
+            {captions[activeCaptionIndex]}
+          </div>
+          <button 
+            className="copy-btn"
+            onClick={() => handleCopy(captions[activeCaptionIndex], 'caption')}
+          >
+            {copied === 'caption' ? 'Copied!' : 'Copy Caption'}
+          </button>
+        </div>
+      </div>
+      
+      <div className="hashtags-section">
+        <h3>Suggested Hashtags</h3>
+        <div className="hashtags-container">
+          {hashtags.map((hashtag, index) => (
+            <span key={index} className="hashtag">{hashtag}</span>
+          ))}
+        </div>
+        <button 
+          className="copy-btn"
+          onClick={() => handleCopy(hashtags.join(' '), 'hashtags')}
+        >
+          {copied === 'hashtags' ? 'Copied!' : 'Copy Hashtags'}
+        </button>
+      </div>
+      
+      <div className="full-caption-section">
+        <h3>Full Instagram Post</h3>
+        <div className="full-caption">
+          <p>{captions[activeCaptionIndex]}</p>
+          <p className="hashtags-preview">{hashtags.join(' ')}</p>
+        </div>
+        <button 
+          className="copy-btn primary"
+          onClick={() => handleCopy(getFullCaption(activeCaptionIndex), 'full')}
+        >
+          {copied === 'full' ? 'Copied!' : 'Copy Full Post'}
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default CaptionDisplay;
